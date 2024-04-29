@@ -8,6 +8,7 @@ from http import HTTPStatus
 from dashscope import MultiModalConversation
 from PIL import Image, ImageDraw
 from scripts.audio_assistant import AudioAssistant
+from scripts.utils.img_saver import ImageSaver
 import dashscope
 import json
 import matplotlib.pyplot as plt
@@ -17,9 +18,12 @@ import cv2
 import time
 import numpy as np
 import os
+import rospy
+import threading
 
 
-def save_color_images():
+
+def save_color_images_rs():
     """
     Capture and save color images from the RealSense camera.
 
@@ -64,6 +68,22 @@ def save_color_images():
         # stop the pipeline and close the OpenCV windows
         pipeline.stop()
         cv2.destroyAllWindows()
+
+def save_color_images_gemini():
+    """
+    Capture and save color images from the Gemini camera.
+
+    Parameters:
+        folder_path (str): folder to save the images.
+        save_interval (int): interval in seconds to save images.
+    """
+    image_saver = ImageSaver()
+
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    cv2.destroyAllWindows()
 
 def add_bbox_patch(ax, draw, bbox, color, w, h, caption):
     """
@@ -276,30 +296,43 @@ def get_curi_response_with_audio(api_key, base_url, user_input, curigpt_output, 
         realtime_flag (bool): Whether to enable interactive reasoning in real-time.
         prompt_append (bool): Whether to append the model's current response to the next prompt.
     """
+
+    rospy.init_node('image_saver', anonymous=True)
+
     # Create an instance of the AudioAssistant class
     assistant = AudioAssistant(api_key, base_url, user_input, curigpt_output)
 
     # check if the CuriGPT need to work in the real-time mode
-    if realtime_flag:
-        prompt_img_path = realtime_img_path
-    else:
-        prompt_img_path = local_img_path
+    prompt_img_path = realtime_img_path if realtime_flag else local_img_path
+
+    # Start the image saving thread
+    image_thread = threading.Thread(target=save_color_images_gemini)
+    image_thread.start()
 
     inference_results = None
     if not prompt_append:
         # print("without prompt append")
-        for i in range(rounds):
-            save_color_images()
-            assistant.record_audio()
-            transcription = assistant.transcribe_audio()
-            instruction = transcription
-            response = single_multimodal_call(base_multimodal_prompt, instruction, prompt_img_path, log=True, return_response=True)
+        try:
+            for i in range(rounds):
+                # save_color_images_rs()
+                assistant.record_audio()
+                transcription = assistant.transcribe_audio()
+                instruction = transcription
+                response = single_multimodal_call(base_multimodal_prompt, instruction, prompt_img_path, log=True, return_response=True)
 
-            print("CURI audio response:\n", response)
+                print("CURI audio response:\n", response)
 
-            # play the audio response
-            if response is not None:
-                assistant.text_to_speech(response)
+                # play the audio response
+                if response is not None:
+                    assistant.text_to_speech(response)
+
+        finally:
+            # Ensure all threads are cleaned up properly
+            rospy.signal_shutdown("Shutting down ROS node.")
+            image_thread.join()  # Wait for the image saving thread to finish
+
+            print("Processing complete.")
+
 
     else:
         if rounds < 1:

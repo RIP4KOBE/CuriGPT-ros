@@ -119,13 +119,13 @@ if __name__ == '__main__':
         config = json.load(config_file)
 
     # accessing configuration variables
-    api_key = config['api_key']
+    openai_api_key = config['openai_api_key']
     base_url = config['base_url']
     user_input_filename = config['user_input_filename']
     curigpt_output_filename = config['curigpt_output_filename']
 
     # create an instance of the AudioAssistant class
-    assistant = AudioAssistant(api_key, base_url, user_input_filename, curigpt_output_filename)
+    assistant = AudioAssistant(openai_api_key, base_url, user_input_filename, curigpt_output_filename)
 
     # run the audio assistant in demo mode
     assistant.audio_demo()
