@@ -1,0 +1,8 @@
+{
+    "openai_api_key": "sk-59XTKMjGzgbgSJjpC9D770A52eBd4d68902223561eE3F242",
+    "base_url": "https://www.jcapikey.com/v1",
+    "user_input_filename": "../assets/chat_audio/user_input.wav",
+    "curigpt_output_filename": "../assets/chat_audio/curigpt_output.mp3",
+    "realtime_img_path": "../assets/img/realtime_rgb/realtime_rgb.png",
+    "local_img_path": "../assets/img/curigpt_demo_huawei.png"
+}

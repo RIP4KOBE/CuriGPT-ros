@@ -1,0 +1,12 @@
+dashscope~=1.17.0
+matplotlib~=3.7.5
+pyrealsense2~=2.55.1.6486
+opencv-python~=4.9.0.80
+numpy~=1.24.4
+pillow~=10.3.0
+sounddevice~=0.4.6
+soundfile~=0.12.1
+openai~=1.17.1
+scipy~=1.10.1
+pynput~=1.7.6
+pydub~=0.25.1
