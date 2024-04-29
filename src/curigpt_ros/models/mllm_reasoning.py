@@ -14,7 +14,7 @@ import matplotlib.patches as patches
 from PIL import Image, ImageDraw
 from audio_assistant import AudioAssistant
 
-local_file_path1 = '../assets/img/curigpt_demo_huawei.png'
+local_file_path1 = '../../../assets/img/curigpt_demo_huawei.png'
 
 base_multimodal_prompt = [
 #     {

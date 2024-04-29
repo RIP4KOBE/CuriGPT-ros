@@ -7,9 +7,8 @@ High-level task reasoning for CURI manipulation via Multimodal Large Language Mo
 from http import HTTPStatus
 from dashscope import MultiModalConversation
 from PIL import Image, ImageDraw
-from scripts.audio_assistant import AudioAssistant
-from scripts.utils.img_saver import ImageSaver
-import dashscope
+from src.curigpt_ros.models.audio_assistant import AudioAssistant
+from src.curigpt_ros.utils.img_saver import ImageSaver
 import json
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches

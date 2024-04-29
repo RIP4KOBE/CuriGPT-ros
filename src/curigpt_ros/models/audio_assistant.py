@@ -115,7 +115,7 @@ class AudioAssistant:
 if __name__ == '__main__':
 
     # load the configuration from the config.json file
-    with open('../config/config.json', 'r') as config_file:
+    with open('../../../config/config.json', 'r') as config_file:
         config = json.load(config_file)
 
     # accessing configuration variables
