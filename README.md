@@ -39,8 +39,8 @@ For this function, we implemented a Voice Q&A robot based on multimodal large la
 This whole pipeline can be activated by calling
 
 ```
-cd ~/CuriGPT/scripts/
-python curigpt.py
+cd /path/to/curigpt_ros
+python3 scripts/curigpt.py
 ```
 
 [//]: # (## Cite)
