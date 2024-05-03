@@ -1,0 +1,6 @@
+devel_space: /home/zhuoli/curigpt_ws/src/curigpt_ros/devel
+install: false
+install_space: /home/zhuoli/curigpt_ws/src/curigpt_ros/install
+profile: default
+source_space: /home/zhuoli/curigpt_ws/src/curigpt_ros/src
+workspace: /home/zhuoli/curigpt_ws/src/curigpt_ros
