@@ -180,8 +180,10 @@ def get_curi_response_with_audio(model_name, api_key, base_url, user_input, curi
     prompt_img_path = rgb_img_path if realtime_flag else local_img_path
 
     # Start the image saving thread
-    # image_thread = threading.Thread(target=save_images_gemini)
-    # image_thread.start()
+    image_thread = threading.Thread(target=save_images_gemini)
+    image_thread.start()
+
+
 
     if not prompt_append:
         try:
@@ -189,9 +191,11 @@ def get_curi_response_with_audio(model_name, api_key, base_url, user_input, curi
                 # save_images_gemini()
                 assistant.record_audio()
                 transcription = assistant.transcribe_audio()
+
                 response = single_multimodal_call(model_name, base_multimodal_prompt, transcription,
                                                   prompt_img_path,
                                                   log=True, return_response=True)
+
 
                 # print("Type of response:", type(response))
                 # print("Response content:", response)
@@ -225,8 +229,7 @@ def get_curi_response_with_audio(model_name, api_key, base_url, user_input, curi
         finally:
             # Ensure all threads are cleaned up properly
             rospy.signal_shutdown("Shutting down ROS node.")
-            # image_thread.join()  # Wait for the image saving thread to finish
-
+            image_thread.join()  # Wait for the image saving thread to finish
             print("Processing complete.")
 
     else:
@@ -315,7 +318,7 @@ if __name__ == '__main__':
             "role": "user",
             "content": [
                 {"image": local_img_path},
-                {"text": "Can you give me something to drink?"}
+                {"text": "Can you give me the soda to drink?"}
             ]
         },
         {

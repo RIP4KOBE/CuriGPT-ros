@@ -13,16 +13,29 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import open3d as o3d
 
-
 class ImageSaver:
     def __init__(self):
         self.bridge = CvBridge()
+        self.rgb_callback_flag = False
+        self.depth_callback_flag = False
+
+        # Image save rate parameter
+        self.save_rate = rospy.get_param('~save_rate', 1)  # Default to 1 Hz
+        self.rate = rospy.Rate(self.save_rate)
+
+        # Last save times
+        self.last_rgb_save_time = rospy.Time.now()
+        self.last_depth_save_time = rospy.Time.now()
+
+        # Subscribers
         self.rgb_img_sub = rospy.Subscriber("/camera/color/image_raw", RosImage, self.rgb_callback)
         self.depth_img_sub = rospy.Subscriber("/camera/depth/image_raw", RosImage, self.depth_callback)
+
+        # Directories for saving images
         self.rgb_save_dir = "assets/img/realtime_rgb"
         self.depth_save_dir = "assets/img/realtime_depth"
 
-        # Check if directories exist, create them if they don't
+        # Create directories if they don't exist
         if not os.path.exists(self.rgb_save_dir):
             os.makedirs(self.rgb_save_dir)
         if not os.path.exists(self.depth_save_dir):
@@ -30,33 +43,55 @@ class ImageSaver:
 
         self.image_count = 0
 
-    def rgb_callback(self, data):
-        try:
-            # Convert ROS image message to OpenCV image
-            cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-        except CvBridgeError as e:
-            print(e)
-            return
+        # Timer for checking the reception of images
+        self.timer = rospy.Timer(rospy.Duration(1), self.check_images_received)
 
-        # Save the image
-        img_filename = os.path.join(self.rgb_save_dir, "realtime_rgb.png")
-        cv2.imwrite(img_filename, cv_image)
-        # print(f"Saved {img_filename}")
-        self.image_count += 1
+    def rgb_callback(self, data):
+        self.rgb_callback_flag = True  # Set flag to true when image is received
+
+        current_time = rospy.Time.now()
+        if (current_time - self.last_rgb_save_time).to_sec() > 1 / self.save_rate:
+            try:
+                # Convert ROS image message to OpenCV image
+                cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+                img_filename = os.path.join(self.rgb_save_dir, "realtime_rgb.png")
+                cv2.imwrite(img_filename, cv_image)
+                # print(f"Saved RGB image to {img_filename}")
+                self.image_count += 1
+                self.last_rgb_save_time = current_time
+            except CvBridgeError as e:
+                print(e)
 
     def depth_callback(self, data):
-        try:
-            # Convert ROS depth image message to OpenCV image
-            cv_image = self.bridge.imgmsg_to_cv2(data, "passthrough")
-        except CvBridgeError as e:
-            print(e)
-            return
+        self.depth_callback_flag = True  # Set flag to true when image is received
 
-        # Save the image
-        img_filename = os.path.join(self.depth_save_dir, "realtime_depth.png")
-        cv2.imwrite(img_filename, cv_image)
-        # print(f"Saved Depth image to {img_filename}")
-        self.image_count += 1
+        current_time = rospy.Time.now()
+        if (current_time - self.last_depth_save_time).to_sec() > 1.0 / self.save_rate:
+            try:
+                img_filename = os.path.join(self.depth_save_dir, "realtime_depth.png")
+
+                # Convert ROS depth image message to OpenCV image
+                cv_image = self.bridge.imgmsg_to_cv2(data, "passthrough")
+                cv2.imwrite(img_filename, cv_image)
+
+                # Open and save the file in binary write mode
+                # with open(img_filename, 'wb') as file:
+                #     file.write(data.data)
+
+                # print(f"Saved Depth image to {img_filename}")
+                self.image_count += 1
+                self.last_depth_save_time = current_time
+            except CvBridgeError as e:
+                print(e)
+
+    def check_images_received(self, event):
+        if not self.rgb_callback_flag and self.depth_callback_flag:
+            print("Waiting for RGB-D image")
+
+        # Reset flags after checking
+        self.rgb_callback_flag = False
+        self.depth_callback_flag = False
+
 
 def save_color_image_rs():
     """
@@ -215,7 +250,7 @@ def get_spatial_coordinates(bbox, rgb_img, depth_img, cam_intrinsics):
 
 
     # Assuming the depth is scaled as depth in millimeters
-    # depth_map = depth_map.astype(np.float32) / 1000.0
+    # depth_array = depth_array.astype(np.float32) / 1000.0
 
     # define the camera intrinsics
     camera_intrinsics_matrix = cam_intrinsics.intrinsic_matrix
@@ -225,7 +260,7 @@ def get_spatial_coordinates(bbox, rgb_img, depth_img, cam_intrinsics):
                                                                                             img_width),
                       int(bbox[3] / 1000 * img_hight))
 
-    # print(x1, y1, x2, y2)
+    print(x1, y1, x2, y2)
 
     # calculate the center of the bounding box
     x_center = int((x1 + x2) / 2)
@@ -234,11 +269,11 @@ def get_spatial_coordinates(bbox, rgb_img, depth_img, cam_intrinsics):
     # Get the depth value at the center of the bounding box
     z = depth_array[y_center, x_center]
 
-    # print("Depth value at center of bounding box:", z)
+    print("Depth value at center of bounding box:", z)
 
     # Create a vector for the pixel coordinates including the depth
     pixel_vector = np.array([x_center * z, y_center * z, z])
-    # print("Pixel Vector:", pixel_vector)
+    print("Pixel Vector:", pixel_vector)
     pixel_vector = pixel_vector.reshape(3, 1)  # Ensuring the pixel_vector is a column vector
 
     # Compute the inverse of the camera intrinsic matrix
@@ -252,7 +287,7 @@ def get_spatial_coordinates(bbox, rgb_img, depth_img, cam_intrinsics):
 
     # Calculate the 3D coordinates
     spatial_coordinates = camera_intrinsics_inv.dot(pixel_vector)
-    # print("World Coordinates (X, Y, Z):", spatial_coordinates)
+    print("World Coordinates (X, Y, Z):", spatial_coordinates)
 
     return spatial_coordinates
 
@@ -278,6 +313,9 @@ def create_point_cloud_from_rgbd(rgb_image_path, depth_image_path, camera_intrin
 
 def vis_spatial_point(spatial_coordinates, rgb_img, depth_img, cam_intrinsics):
 
+    # Check if the file exists and is not empty
+    # return os.path.exists(rgb_img) and os.path.getsize(filename) > 0
+
     # Create the scene point cloud
     scene_pcd = create_point_cloud_from_rgbd(rgb_img, depth_img, cam_intrinsics)
 
@@ -285,7 +323,7 @@ def vis_spatial_point(spatial_coordinates, rgb_img, depth_img, cam_intrinsics):
     highlight_point = spatial_coordinates
 
     # Create a sphere to represent the highlighted point
-    sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.000002)  # Adjust the radius as needed
+    sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.02)  # Adjust the radius as needed
     sphere.paint_uniform_color([1, 0, 0])  # Red color
     translation_vector = np.reshape(highlight_point, (3, 1))
     sphere.translate(translation_vector)
@@ -302,12 +340,12 @@ def vis_spatial_point(spatial_coordinates, rgb_img, depth_img, cam_intrinsics):
 
 
 if __name__ == '__main__':
-    bbox =[284, 524, 398, 696]
+    bbox =[343, 761, 516, 888]
     rgb_img = "assets/img/realtime_rgb/realtime_rgb.png"
     depth_img = "assets/img/realtime_depth/realtime_depth.png"
     cam_intrinsics = o3d.camera.PinholeCameraIntrinsic(width=640, height=360, fx=345.9, fy=346.0, cx=322.7, cy=181.3)
 
     get_spatial_coordinates(bbox, rgb_img, depth_img, cam_intrinsics)
 
-    spatial_grasp_point = [[-2.03719767e-05,  7.26396925e-06,  6.66666674e-05]]
+    spatial_grasp_point = [[-0.08743192,  0.20586329,  0.62099999]]
     vis_spatial_point(spatial_grasp_point, rgb_img, depth_img, cam_intrinsics)

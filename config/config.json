@@ -4,7 +4,7 @@
     "user_input_filename": "assets/chat_audio/user_input.wav",
     "curigpt_output_filename": "assets/chat_audio/curigpt_output.mp3",
     "rgb_img_path": "assets/img/realtime_rgb/realtime_rgb.png",
-    "local_img_path": "assets/img/curigpt_test_tabletop.png",
     "depth_img_path": "assets/img/realtime_depth/realtime_depth.png",
+    "local_img_path": "assets/img/curigpt_test_tabletop.png",
     "model_name": "qwen-vl-max"
 }

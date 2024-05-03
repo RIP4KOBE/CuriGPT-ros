@@ -99,7 +99,7 @@ def softhand_grasp(synergy_control_parameters):
 
 def grasp_and_place(camera_grasp_point, camera_place_point):
 
-    rospy.init_node('grasp_and_place_node')
+    # rospy.init_node('grasp_and_place_node')
     rospy.loginfo("Starting grasp_and_place operation")
     rate = rospy.Rate(1)
 
@@ -109,33 +109,43 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
 
     # define pre-grasp pose
     pre_grasp_pose = Pose()
-    pre_grasp_pose.position.x = 0.452
-    pre_grasp_pose.position.y = 0.020
-    pre_grasp_pose.position.z = 0.957
-    pre_grasp_pose.orientation.x = 0.861
-    pre_grasp_pose.orientation.y = -0.239
-    pre_grasp_pose.orientation.z = 0.385
-    pre_grasp_pose.orientation.w = -0.232
+    pre_grasp_pose.position.x = 0.12925132
+    pre_grasp_pose.position.y = -0.059268
+    pre_grasp_pose.position.z = 1.03635
+    pre_grasp_pose.orientation.x = 0.714494
+    pre_grasp_pose.orientation.y = -0.25879
+    pre_grasp_pose.orientation.z = 0.4299753
+    pre_grasp_pose.orientation.w = -0.487487
 
     # define grasp pose
     grasp_pose = Pose()
     grasp_pose.position.x = robot_grasp_point[0]
     grasp_pose.position.y = robot_grasp_point[1]
-    grasp_pose.position.z = robot_grasp_point[2]
-    grasp_pose.orientation.x = 0.861
-    grasp_pose.orientation.y = -0.239
-    grasp_pose.orientation.z = 0.385
-    grasp_pose.orientation.w = -0.232
+    grasp_pose.position.z = robot_grasp_point[2] + 0.18
+    grasp_pose.orientation.x = -0.58267
+    grasp_pose.orientation.y = 0.39935
+    grasp_pose.orientation.z = -0.30119
+    grasp_pose.orientation.w = 0.64053
+
+    # define grasp-place middle pose
+    middle_pose = Pose()
+    middle_pose.position.x = robot_grasp_point[0] - 0.4
+    middle_pose.position.y = robot_grasp_point[1] - 0.4
+    middle_pose.position.z = robot_grasp_point[2] + 0.18
+    middle_pose.orientation.x = -0.58267
+    middle_pose.orientation.y = 0.39935
+    middle_pose.orientation.z = -0.30119
+    middle_pose.orientation.w = 0.64053
 
     # define place pose
     place_pose = Pose()
     place_pose.position.x = robot_place_point[0]
     place_pose.position.y = robot_place_point[1]
-    place_pose.position.z = robot_place_point[2]
-    place_pose.orientation.x = 0.861
-    place_pose.orientation.y = -0.239
-    place_pose.orientation.z = 0.385
-    place_pose.orientation.w = -0.232
+    place_pose.position.z = robot_place_point[2] + 0.18
+    place_pose.orientation.x = -0.58267
+    place_pose.orientation.y = 0.39935
+    place_pose.orientation.z = -0.30119
+    place_pose.orientation.w = 0.64053
 
     # define softhand grasp synergy parameters
     close_synergy_control_parameters = [1.0, 0.0]
@@ -151,15 +161,18 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
     # close softhand
     softhand_grasp(close_synergy_control_parameters)
 
+    # move to middle pose
+    publish_grasp_pose_to_service(middle_pose, "Moving to middle pose...")
+
     # move to place pose
-    publish_grasp_pose_to_service(place_pose, "Moving to post-grasp pose...")
+    publish_grasp_pose_to_service(place_pose, "Moving to place pose...")
     # rospy.sleep(3)
 
     # open softhand
     softhand_grasp(open_synergy_control_parameters)
 
     # move back
-    publish_grasp_pose_to_service(pre_grasp_pose, "Moving to pre-grasp pose...")
+    publish_grasp_pose_to_service(pre_grasp_pose, "Moving back...")
 
     rospy.loginfo("Grasp and place operation completed")
 
@@ -173,21 +186,23 @@ def grasp_and_give(camera_grasp_point):
     # Transform the coordinates from the bounding box to robot base coordinates
     robot_grasp_point = transform_coordinates(camera_grasp_point)
 
+    print("robot_grasp_point: ", robot_grasp_point)
+
     # define pre-grasp pose
     pre_grasp_pose = Pose()
-    pre_grasp_pose.position.x = 0.452
-    pre_grasp_pose.position.y = 0.020
-    pre_grasp_pose.position.z = 0.957
-    pre_grasp_pose.orientation.x = 0.861
-    pre_grasp_pose.orientation.y = -0.239
-    pre_grasp_pose.orientation.z = 0.385
-    pre_grasp_pose.orientation.w = -0.232
+    pre_grasp_pose.position.x = 0.12925132
+    pre_grasp_pose.position.y = -0.059268
+    pre_grasp_pose.position.z = 1.03635
+    pre_grasp_pose.orientation.x = 0.714494
+    pre_grasp_pose.orientation.y = -0.25879
+    pre_grasp_pose.orientation.z = 0.4299753
+    pre_grasp_pose.orientation.w = -0.487487
 
-    # define grasp pose
+# define grasp pose
     grasp_pose = Pose()
     grasp_pose.position.x = robot_grasp_point[0]
     grasp_pose.position.y = robot_grasp_point[1]
-    grasp_pose.position.z = robot_grasp_point[2]
+    grasp_pose.position.z = robot_grasp_point[2] + 0.18
     grasp_pose.orientation.x = -0.58267
     grasp_pose.orientation.y = 0.39935
     grasp_pose.orientation.z = -0.30119
@@ -218,14 +233,16 @@ def grasp_and_give(camera_grasp_point):
     softhand_grasp(close_synergy_control_parameters)
 
     # move to give pose
-    publish_grasp_pose_to_service(give_pose, "Moving to give pose...")
+    # publish_grasp_pose_to_service(give_pose, "Moving to give pose...")
     # rospy.sleep(3)
+
+    # move back
+    publish_grasp_pose_to_service(pre_grasp_pose, "Moving back to pre-grasp pose...")
 
     # open softhand
     softhand_grasp(open_synergy_control_parameters)
 
-    # move back
-    publish_grasp_pose_to_service(pre_grasp_pose, "Moving back to pre-grasp pose...")
+
     rospy.loginfo("Grasp and give operation completed")
 
 
