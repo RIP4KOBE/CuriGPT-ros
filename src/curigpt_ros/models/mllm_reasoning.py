@@ -14,7 +14,7 @@ import matplotlib.patches as patches
 from PIL import Image, ImageDraw
 from audio_assistant import AudioAssistant
 
-local_file_path1 = '../../../assets/img/curigpt_demo_huawei.png'
+local_file_path1 = '../../assets/img/curigpt_demo_huawei.png'
 
 base_multimodal_prompt = [
 #     {
@@ -201,7 +201,7 @@ def single_multimodal_call(base_prompt, query, log=True, return_response=True):
         print("CURI response:\n", response)
 
         # Plot the image with bounding boxes if the response contains actions.
-        # plot_image_with_bbox(local_file_path1, response)
+        plot_image_with_bbox(local_file_path1, response)
     else:
         print(response_dict.code)  # The error code.
         print(response_dict.message)  # The error message.

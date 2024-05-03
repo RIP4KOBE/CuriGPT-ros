@@ -37,8 +37,8 @@ class AudioAssistant:
                 print("Recording... Release 'Enter' to stop.")
                 # Start non-blocking recording
                 sd.rec(samplerate=sample_rate, channels=1, dtype='float32', out=audio_frames, blocking=True)
-            else:
-                print("Wait for recording...")
+            # else:
+            #     # print("Wait for recording...")
 
         # define the callback function for key release
         def on_release(key):
@@ -100,9 +100,9 @@ class AudioAssistant:
         '''
         Play the demo audio files
         '''
-        demo1_audio = "../assets/chat_audio/huawei_demo1.mp3"
-        demo2_audio = "../assets/chat_audio/huawei_demo2.mp3"
-        demo3_audio = "../assets/chat_audio/huawei_demo3.mp3"
+        demo1_audio = "assets/chat_audio/huawei_demo1.mp3"
+        demo2_audio = "assets/chat_audio/huawei_demo2.mp3"
+        demo3_audio = "assets/chat_audio/huawei_demo3.mp3"
 
         audio_files = [demo1_audio, demo2_audio, demo3_audio]
 
@@ -115,7 +115,7 @@ class AudioAssistant:
 if __name__ == '__main__':
 
     # load the configuration from the config.json file
-    with open('../../../config/config.json', 'r') as config_file:
+    with open('config/config.json', 'r') as config_file:
         config = json.load(config_file)
 
     # accessing configuration variables
