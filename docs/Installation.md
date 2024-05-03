@@ -21,18 +21,28 @@ Please follow the [official documentation](http://wiki.ros.org/noetic/Installati
 ## Install CuriGPT
 
 ### Download the package
+Clone the repository into the `src` folder of a catkin workspace
 
 ```
-git clone https://github.com/RIP4KOBE/CuriGPT.git
+git clone https://github.com/RIP4KOBE/curigpt_ros.git
 ```
 
 ### Install requirements
+Create and activate a new virtual environment.
 
 ```
-cd ~/CuriGPT
-python3.8 -m venv curigpt
-source curigpt/bin/activate
+cd /path/to/curigpt_ros
+python3 -m venv --system-site-packages .venv
+source .venv/bin/activate
+```
+Install the Python dependencies within the activated virtual environment.
+```
 pip install -r requirements.txt
+```
+Build and source the catkin workspace,
+```
+catkin build curigpt_ros
+source /path/to/catkin_ws/devel/setup.bash
 ```
 
 ## Configure APIs
