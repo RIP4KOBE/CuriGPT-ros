@@ -311,28 +311,31 @@ def create_point_cloud_from_rgbd(rgb_image_path, depth_image_path, camera_intrin
 
     return pcd
 
-def vis_spatial_point(spatial_coordinates, rgb_img, depth_img, cam_intrinsics):
+def vis_spatial_point(spatial_coordinates_list, rgb_img, depth_img, cam_intrinsics):
 
-    # Check if the file exists and is not empty
-    # return os.path.exists(rgb_img) and os.path.getsize(filename) > 0
+    if not spatial_coordinates_list:
+        print("No points or colors provided for visualization.")
+        return
 
-    # Create the scene point cloud
+    # create the scene point cloud
     scene_pcd = create_point_cloud_from_rgbd(rgb_img, depth_img, cam_intrinsics)
 
-    # Coordinate to highlight
-    highlight_point = spatial_coordinates
-
-    # Create a sphere to represent the highlighted point
-    sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.02)  # Adjust the radius as needed
-    sphere.paint_uniform_color([1, 0, 0])  # Red color
-    translation_vector = np.reshape(highlight_point, (3, 1))
-    sphere.translate(translation_vector)
-
-# Prepare visualization
+    # prepare visualization
     vis = o3d.visualization.Visualizer()
     vis.create_window()
     vis.add_geometry(scene_pcd)
-    vis.add_geometry(sphere)
+    colors_list = [[1, 0, 0], [0, 1, 0]]  # RGB colors: red and green
+
+    # Iterate over the list of coordinates and colors
+    for point, color in zip(spatial_coordinates_list, colors_list):
+        # Create a sphere to represent the highlighted point
+        sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.02)  # Adjust the radius as needed
+        sphere.paint_uniform_color(color)  # Set color
+        translation_vector = np.reshape(point, (3, 1))
+        sphere.translate(translation_vector)
+
+        # Add geometry to visualizer
+        vis.add_geometry(sphere)
 
     # Run the visualizer
     vis.run()

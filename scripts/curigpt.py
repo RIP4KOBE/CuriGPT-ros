@@ -38,7 +38,7 @@ def single_multimodal_call(model_name, base_prompt, query, prompt_img_path, log=
     # get the response from qwen_vl_max
     if model_name == 'qwen-vl-max':
         response_dict = dashscope.MultiModalConversation.call(model='qwen-vl-max',
-                                                     messages=new_prompt)
+                                                     messages=new_prompt, top_p=0.7, top_k=80)
 
         if response_dict.status_code == HTTPStatus.OK:
             response = response_dict[
@@ -183,8 +183,6 @@ def get_curi_response_with_audio(model_name, api_key, base_url, user_input, curi
     image_thread = threading.Thread(target=save_images_gemini)
     image_thread.start()
 
-
-
     if not prompt_append:
         try:
             for i in range(rounds):
@@ -200,27 +198,19 @@ def get_curi_response_with_audio(model_name, api_key, base_url, user_input, curi
                 # print("Type of response:", type(response))
                 # print("Response content:", response)
 
-                # parse the JSON string for qwen_vl_chat_v1 model.
+                # parse the JSON string of response.
                 try:
                     output_data = json.loads(response)
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
                     return
 
-                # parse the JSON string for qwen_vl_max model.
-                # try:
-                #     # Assuming response is a list of dictionaries with a 'text' key holding the JSON string
-                #     output_data = [json.loads(item['text']) for item in response] if response else None
-                # except json.JSONDecodeError as e:
-                #     print(f"Error decoding JSON: {e}")
-                #     return
-
-                if output_data['robot_response'] is not None:
+                if output_data['robot_response']:
                     verbal_response = output_data['robot_response']
                     assistant.text_to_speech(verbal_response)
                     print("CURI audio response:\n", verbal_response)
 
-                if output_data['robot_actions'] is not None:
+                if output_data['robot_actions']:
                     action_response = output_data['robot_actions']
                     print("CURI action response:\n", action_response)
                     process_robot_actions(action_response, rgb_img_path, depth_img_path)
@@ -275,28 +265,22 @@ if __name__ == '__main__':
     model_name = config['model_name']
 
     base_multimodal_prompt = [
-            {
-                "role": "system",
-                "content": [{
-                    "text": '''You are a multimodal large language model serving as the brain for a humanoid robot. Your capabilities include understanding and processing both visual data and natural language. Here is what you need to do:
+        {
+            "role": "system",
+            "content": [{
+                "text": '''You are an excellent responser of human instructions for household tabletop tasks. Given an verbal instruction and an image of the tabletop scenario, you respond to the human instruction and select appropriate robot actions if necessary.
+                
+                        Your response must be output in a structured JSON format and contain the following two keywords:
+                        - "robot_response" for the verbal response to the human instruction.
+                        - "robot_actions" for the description of the physical action you will perform, including the specific action name and parameters for bounding box coordinates.
+                        Must add the "," delimiter between the two keywords to ensure proper JSON formatting.
 
-        1. **Speech-to-Speech Reasoning**: When provided with a human query and a scene image, analyze the image, understand the query's context, and generate an appropriate verbal response that demonstrates your understanding of the image content. The robot action is None in this case.
-
-        2. **Speech-to-Action Reasoning**: When the human command involves a task that you should perform, assess the necessary action, identify the relevant object in the image, and determine the bounding box coordinates for that object. Then, formulate a response plan to execute the task.
-
-        Upon processing the information, output your responses in a structured JSON format with the following keys:
-
-        - "robot_response" for the verbal response to the human query.
-        - "robot_actions" for the description of the physical action you will perform, including the bounding box coordinates of the object you will manipulate.''',
-
-                    "extra": '''ROBOT ACTION LIST is defined as follows:
-        grasp_and_place(arg1, arg2): The robot grasps the object at position arg1 and places it at position arg2.
-        grasp_handover_give(arg1): The robot grasps the object at position arg1 with the left hand, hands it over to 
-        the right hand, and give it the user.
-        grasp_and_give(arg1): The robot grasps the object at position arg1 and gives it to the user. Bounding box coordinates (arg1, arg2) should be determined by you based on the image provided. Here are some examples of expected inputs and outputs:'''
-                }]
-            },
-        # Example 1: Speech-to-Speech Reasoning
+                        Two robot actions are available to you:
+                        - grasp_and_place(arg1, arg2): The robot grasps the object located at the bounding box coordinates specified by `arg1`, and places it at the location specified by `arg2`.
+                        - grasp_and_give(arg1): The robot picks up the object identified by the bounding box coordinates `arg1` and hands it directly to the user. This action requires only arg1 for the coordinates of the object to be picked up.
+                        Note that both arg1 and arg2 should be detected by yourself from the provided image.'''
+            }]
+        },
         {
             "role": "user",
             "content": [
@@ -313,12 +297,11 @@ if __name__ == '__main__':
                 }, indent=4)
             }]
         },
-        # Example 2: Speech-to-Action Reasoning
         {
             "role": "user",
             "content": [
                 {"image": local_img_path},
-                {"text": "Can you give me the soda to drink?"}
+                {"text": "Can you give me something to drink?"}
             ]
         },
         {
