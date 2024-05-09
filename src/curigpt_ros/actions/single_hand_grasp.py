@@ -30,15 +30,9 @@ def transform_coordinates(camera_manipulation_point):
     T_camlink_camcolor = Transform(Rotation.from_quat([-0.500, 0.500, -0.500, 0.500]),
                                          [0, 0, 0])
 
-
-    # - Translation: [0.000, 0.000, 0.000]
-    # - Rotation: in Quaternion[0.500, -0.500, 0.500, 0.500]
-    # in RPY(radian)[1.571, -1.571, 0.000]
-    # in RPY(degree)[90.000, -90.000, 0.000]
-
     # transformation of hand-eye calibration
-    T_base_camlink = Transform(Rotation.from_quat([0.39685553, -0.0495174, 0.16580192, 0.90142300]),
-                               [-0.01607738, -0.3496925, 0.19975830])
+    T_base_camlink = Transform(Rotation.from_quat([0.4032260, -0.03184084, 0.171038733, 0.8984100783]),
+                               [-0.01027, -0.36069, 0.2066220])
 
 
     T_base_grasp = T_base_camlink * T_camlink_camcolor * T_camcolor_grasp
@@ -131,7 +125,7 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
     # define grasp pose
     grasp_pose = Pose()
     grasp_pose.position.x = robot_grasp_point[0]
-    grasp_pose.position.y = robot_grasp_point[1]
+    grasp_pose.position.y = robot_grasp_point[1] + 0.05
     grasp_pose.position.z = robot_grasp_point[2] + 0.15
     grasp_pose.orientation.x = -0.58267
     grasp_pose.orientation.y = 0.39935
@@ -218,41 +212,45 @@ def grasp_and_give(camera_grasp_point):
     # pre_grasp_pose.orientation.z = -0.30119
     # pre_grasp_pose.orientation.w = 0.64053
 
-    # # define grasp pose
-    # grasp_pose = Pose()
-    # grasp_pose.position.x = robot_grasp_point[0]
-    # grasp_pose.position.y = robot_grasp_point[1]
-    # grasp_pose.position.z = robot_grasp_point[2] + 0.15
-    # grasp_pose.orientation.x = -0.58267
-    # grasp_pose.orientation.y = 0.39935
-    # grasp_pose.orientation.z = -0.30119
-    # grasp_pose.orientation.w = 0.64053
-
     # define grasp pose
     grasp_pose = Pose()
     grasp_pose.position.x = robot_grasp_point[0]
     grasp_pose.position.y = robot_grasp_point[1]
-    grasp_pose.position.z = robot_grasp_point[2] + 0.18
-    grasp_pose.orientation.x = -0.303952
-    grasp_pose.orientation.y = 0.6563
-    grasp_pose.orientation.z = 0.00729
-    grasp_pose.orientation.w = 0.6905127
+    grasp_pose.position.z = robot_grasp_point[2] + 0.165
+    grasp_pose.orientation.x = -0.58267
+    grasp_pose.orientation.y = 0.39935
+    grasp_pose.orientation.z = -0.30119
+    grasp_pose.orientation.w = 0.64053
 
-    # orientation:
-    # x: -0.3039523632833702
-    # y: 0.656316880145105
-    # z: 0.007299965635336636
-    # w: 0.6905127255835137
+    # define grasp pose
+    # grasp_pose = Pose()
+    # grasp_pose.position.x = robot_grasp_point[0]
+    # grasp_pose.position.y = robot_grasp_point[1]
+    # grasp_pose.position.z = robot_grasp_point[2] + 0.18
+    # grasp_pose.orientation.x = -0.303952
+    # grasp_pose.orientation.y = 0.6563
+    # grasp_pose.orientation.z = 0.00729
+    # grasp_pose.orientation.w = 0.6905127
+
+    # # define grasp-give middle pose
+    # middle_pose = Pose()
+    # middle_pose.position.x = robot_grasp_point[0] - 0.2
+    # middle_pose.position.y = robot_grasp_point[1] - 0.2
+    # middle_pose.position.z = robot_grasp_point[2] + 0.18
+    # middle_pose.orientation.x = -0.303952
+    # middle_pose.orientation.y = 0.6563
+    # middle_pose.orientation.z = 0.00729
+    # middle_pose.orientation.w = 0.6905127
 
     # define grasp-give middle pose
     middle_pose = Pose()
     middle_pose.position.x = robot_grasp_point[0] - 0.2
     middle_pose.position.y = robot_grasp_point[1] - 0.2
     middle_pose.position.z = robot_grasp_point[2] + 0.18
-    middle_pose.orientation.x = -0.303952
-    middle_pose.orientation.y = 0.6563
-    middle_pose.orientation.z = 0.00729
-    middle_pose.orientation.w = 0.6905127
+    middle_pose.orientation.x = -0.58267
+    middle_pose.orientation.y = 0.39935
+    middle_pose.orientation.z = -0.30119
+    middle_pose.orientation.w = 0.64053
 
     # define give pose
     give_pose = Pose()

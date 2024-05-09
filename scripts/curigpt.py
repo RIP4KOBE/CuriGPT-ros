@@ -301,23 +301,22 @@ if __name__ == '__main__':
             "role": "user",
             "content": [
                 {"image": local_img_path},
-                {"text": "Can you give me something to drink?"}
+                {"text": "Can you give me the soda can on the table?"}
             ]
         },
         {
             "role": "assistant",
             "content": [{
                 "text": json.dumps({
-                    "robot_response": "Sure, you can have the soda to drink.",
+                    "robot_response": "Sure, here is your soda can.",
                     "robot_actions": [
                         {
                             "action": "grasp_and_give",
                             "parameters": {
                                 "arg1": {
                                     "description": "soda can",
-                                    "bbox_coordinates": [634, 672, 815, 780]
-                                    # Hypothetical coordinates for the soda can
-                                    # [x1, y1, x2, y2]
+                                    "bbox_coordinates": [634, 672, 815, 780] # Hypothetical bbox coordinates [x1, y1, x2, y2] for the soda can
+
                                 }
                             }
                         }
@@ -343,11 +342,11 @@ if __name__ == '__main__':
                             "parameters": {
                                 "arg1": {
                                     "description": "spam can",
-                                    "bbox_coordinates": [139, 719, 317, 862]  # [x1, y1, x2, y2]
+                                    "bbox_coordinates": [139, 719, 317, 862]  # Hypothetical bbox coordinates [x1, y1, x2, y2] for the spam can
                                 },
                                 "arg2": {
                                     "description": "container",
-                                    "bbox_coordinates": [579, 67, 961, 300]  # [x1, y1, x2, y2]
+                                    "bbox_coordinates": [579, 67, 961, 300]  # Hypothetical bbox coordinates [x1, y1, x2, y2] for the container
                                 }
                             }
                         }
@@ -485,22 +484,22 @@ if __name__ == '__main__':
     #                     Note that both arg1 and arg2 should be detected by yourself from the provided image.'''
     #         }]
     #     },
-    #     # {
-    #     #     "role": "user",
-    #     #     "content": [
-    #     #         {"image": local_img_path},
-    #     #         {"text": "hey CURI, what do you see right now?"},
-    #     #     ]
-    #     # },
-    #     # {
-    #     #     "role": "assistant",
-    #     #     "content": [{
-    #     #         "text": json.dumps({
-    #     #             "robot_response": "Now I see a white table with various objects on it, including a banana, an apple, a spray bottle, a green box, and a red game controller.",
-    #     #             "robot_actions": None
-    #     #         }, indent=4)
-    #     #     }]
-    #     # },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "hey CURI, what do you see right now?"},
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Now I see a white table with various objects on it, including a banana, an apple, a spray bottle, a green box, and a red game controller.",
+    #                 "robot_actions": None
+    #             }, indent=4)
+    #         }]
+    #     },
     #     {
     #         "role": "user",
     #         "content": [
