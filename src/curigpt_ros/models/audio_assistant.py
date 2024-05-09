@@ -100,15 +100,15 @@ class AudioAssistant:
         '''
         Play the demo audio files
         '''
-        demo1_audio = "assets/chat_audio/huawei_demo1.mp3"
-        demo2_audio = "assets/chat_audio/huawei_demo2.mp3"
-        demo3_audio = "assets/chat_audio/huawei_demo3.mp3"
+        demo1_audio = "assets/chat_audio/Bicchi_demo1.mp3"
+        demo2_audio = "assets/chat_audio/Bicchi_demo2.mp3"
+        demo3_audio = "assets/chat_audio/Bicchi_demo3.mp3"
 
-        audio_files = [demo1_audio, demo2_audio, demo3_audio]
+        audio_files = [demo1_audio, demo2_audio]
 
         for audio_file in audio_files:
             # print("Playing:", audio_file)
-            time.sleep(10)
+            time.sleep(8)
             sound = AudioSegment.from_mp3(audio_file)
             play(sound)
 
@@ -122,13 +122,15 @@ if __name__ == '__main__':
     openai_api_key = config['openai_api_key']
     base_url = config['base_url']
     user_input_filename = config['user_input_filename']
-    curigpt_output_filename = config['curigpt_output_filename']
+    # curigpt_output_filename = config['curigpt_output_filename']
+    curigpt_output_filename = "assets/chat_audio/Bicchi_demo3.mp3"
+
 
     # create an instance of the AudioAssistant class
     assistant = AudioAssistant(openai_api_key, base_url, user_input_filename, curigpt_output_filename)
-
+    assistant.text_to_speech("Sure thing, here is the spray bottle.")
     # run the audio assistant in demo mode
-    assistant.audio_demo()
+    # assistant.audio_demo()
 
     # run the audio assistant in interactive mode
     # assistant.record_audio()

@@ -38,7 +38,7 @@ def single_multimodal_call(model_name, base_prompt, query, prompt_img_path, log=
     # get the response from qwen_vl_max
     if model_name == 'qwen-vl-max':
         response_dict = dashscope.MultiModalConversation.call(model='qwen-vl-max',
-                                                     messages=new_prompt, top_p=0.7, top_k=80)
+                                                     messages=new_prompt)
 
         if response_dict.status_code == HTTPStatus.OK:
             response = response_dict[
@@ -269,7 +269,7 @@ if __name__ == '__main__':
             "role": "system",
             "content": [{
                 "text": '''You are an excellent responser of human instructions for household tabletop tasks. Given an verbal instruction and an image of the tabletop scenario, you respond to the human instruction and select appropriate robot actions if necessary.
-                
+
                         Your response must be output in a structured JSON format and contain the following two keywords:
                         - "robot_response" for the verbal response to the human instruction.
                         - "robot_actions" for the description of the physical action you will perform, including the specific action name and parameters for bounding box coordinates.
@@ -358,6 +358,225 @@ if __name__ == '__main__':
     ]
 
     # get the CURI response with audio input and output
+
+    # base_multimodal_prompt = [
+    #     {
+    #         "role": "system",
+    #         "content": [{
+    #             "text": '''You are an excellent responser of human instructions for household tabletop tasks. Given an verbal instruction and an image of the tabletop scenario, you respond to the human instruction and select appropriate robot actions if necessary.
+    #
+    #                     Your response must be output in a structured JSON format and contain the following two keywords:
+    #                     - "robot_response" for the verbal response to the human instruction.
+    #                     - "robot_actions" for the description of the physical action you will perform, including the specific action name and parameters for bounding box coordinates.
+    #                     Must add the "," delimiter between the two keywords to ensure proper JSON formatting.
+    #
+    #                     Two robot actions are available to you:
+    #                     - grasp_and_place(arg1, arg2): The robot grasps the object located at the bounding box coordinates specified by `arg1`, and places it at the location specified by `arg2`.
+    #                     - grasp_and_give(arg1): The robot picks up the object identified by the bounding box coordinates `arg1` and hands it directly to the user. This action requires only arg1 for the coordinates of the object to be picked up.
+    #                     Note that both arg1 and arg2 should be detected by yourself from the provided image.'''
+    #         }]
+    #     },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "hey CURI, what do you see right now?"},
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Now I see a white table with various objects on it, including a banana, an apple, a spray bottle, a green box, and a red game controller.",
+    #                 "robot_actions": None
+    #             }, indent=4)
+    #         }]
+    #     },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "do you know how to use the spray bottle?"},
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Yes, I know how to use a spray bottle. It's a common household item used for cleaning or other purposes. To use it, you typically press down on the top part of the bottle, which releases the liquid inside through a nozzle, creating a fine mist or stream of liquid.",
+    #                 "robot_actions": None
+    #             }, indent=4)
+    #         }]
+    #     },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "Can you handover the spray bottle to me?"}
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Sure thing, here is the spray bottle.",
+    #                 "robot_actions": [
+    #                     {
+    #                         "action": "grasp_and_give",
+    #                         "parameters": {
+    #                             "arg1": {
+    #                                 "description": "spray bottle",
+    #                                 "bbox_coordinates": [634, 672, 815, 780]
+    #                                 # Hypothetical coordinates for the spray bottle
+    #                                 # [x1, y1, x2, y2]
+    #                             }
+    #                         }
+    #                     }
+    #                 ]
+    #             }, indent=4)
+    #         }]
+    #     }
+    #     # {
+    #     #     "role": "user",
+    #     #     "content": [
+    #     #         {"image": local_img_path},
+    #     #         {"text": "Can you put the spam can in the container?"}
+    #     #     ]
+    #     # },
+    #     # {
+    #     #     "role": "assistant",
+    #     #     "content": [{
+    #     #         "text": json.dumps({
+    #     #             "robot_response": "Sure thing.",
+    #     #             "robot_actions": [
+    #     #                 {
+    #     #                     "action": "grasp_and_place",
+    #     #                     "parameters": {
+    #     #                         "arg1": {
+    #     #                             "description": "spam can",
+    #     #                             "bbox_coordinates": [139, 719, 317, 862]  # [x1, y1, x2, y2]
+    #     #                         },
+    #     #                         "arg2": {
+    #     #                             "description": "container",
+    #     #                             "bbox_coordinates": [579, 67, 961, 300]  # [x1, y1, x2, y2]
+    #     #                         }
+    #     #                     }
+    #     #                 }
+    #     #             ]
+    #     #         }, indent=4)
+    #     #     }]
+    #     # }
+    # ]
+
+    # base_multimodal_prompt = [
+    #     {
+    #         "role": "system",
+    #         "content": [{
+    #             "text": '''You are an excellent responser of human instructions for household tabletop tasks. Given an verbal instruction and an image of the tabletop scenario, you respond to the human instruction and select appropriate robot actions if necessary.
+    #
+    #                     Your response must be output in a structured JSON format and contain the following two keywords:
+    #                     - "robot_response" for the verbal response to the human instruction.
+    #                     - "robot_actions" for the description of the physical action you will perform, including the specific action name and parameters for bounding box coordinates.
+    #                     Must add the "," delimiter between the two keywords to ensure proper JSON formatting.
+    #
+    #                     Two robot actions are available to you:
+    #                     - grasp_and_place(arg1, arg2): The robot grasps the object located at the bounding box coordinates specified by `arg1`, and places it at the location specified by `arg2`.
+    #                     - grasp_and_give(arg1): The robot picks up the object identified by the bounding box coordinates `arg1` and hands it directly to the user. This action requires only arg1 for the coordinates of the object to be picked up.
+    #                     Note that both arg1 and arg2 should be detected by yourself from the provided image.'''
+    #         }]
+    #     },
+    #     # {
+    #     #     "role": "user",
+    #     #     "content": [
+    #     #         {"image": local_img_path},
+    #     #         {"text": "hey CURI, what do you see right now?"},
+    #     #     ]
+    #     # },
+    #     # {
+    #     #     "role": "assistant",
+    #     #     "content": [{
+    #     #         "text": json.dumps({
+    #     #             "robot_response": "Now I see a white table with various objects on it, including a banana, an apple, a spray bottle, a green box, and a red game controller.",
+    #     #             "robot_actions": None
+    #     #         }, indent=4)
+    #     #     }]
+    #     # },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "I wan to eat some fruits, can you give me one?"},
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "There's a banana and an apple on the table. Which one do you prefer?",
+    #                 "robot_actions": None
+    #             }, indent=4)
+    #         }]
+    #     },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "Give me the apple, please."}
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Sure, Here's the apple for you.",
+    #                 "robot_actions": [
+    #                     {
+    #                         "action": "grasp_and_give",
+    #                         "parameters": {
+    #                             "arg1": {
+    #                                 "description": "apple",
+    #                                 "bbox_coordinates": [435, 320, 496, 437]  # Hypothetical coordinates for the apple
+    #                             }
+    #                         }
+    #                     }
+    #                 ]
+    #             }, indent=4)
+    #         }]
+    #     },
+    #     {
+    #         "role": "user",
+    #         "content": [
+    #             {"image": local_img_path},
+    #             {"text": "Can you put the banana in the green box?"}
+    #         ]
+    #     },
+    #     {
+    #         "role": "assistant",
+    #         "content": [{
+    #             "text": json.dumps({
+    #                 "robot_response": "Sure thing.",
+    #                 "robot_actions": [
+    #                     {
+    #                         "action": "grasp_and_place",
+    #                         "parameters": {
+    #                             "arg1": {
+    #                                 "description": "banana",
+    #                                 "bbox_coordinates": [379, 486, 474, 652] # Hypothetical coordinates for the banana
+    #
+    #                             },
+    #                             "arg2": {
+    #                                 "description": "green box",
+    #                                 "bbox_coordinates": [538, 284, 709, 656]  # Hypothetical coordinates for the green box
+    #                             }
+    #                         }
+    #                     }
+    #                 ]
+    #             }, indent=4)
+    #         }]
+    #     }
+    # ]
+
+
     get_curi_response_with_audio(model_name, api_key, base_url, user_input_filename, curigpt_output_filename,
                                  rgb_img_path,
                                  depth_img_path, local_img_path, base_multimodal_prompt, rounds=10,

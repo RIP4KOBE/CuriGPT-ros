@@ -24,7 +24,8 @@ def process_robot_actions(action_response, rgb_img, depth_img):
             grasp_bbox = action_response[0]["parameters"]["arg1"]["bbox_coordinates"]
             spatial_grasp_point = get_spatial_coordinates(grasp_bbox, rgb_img, depth_img, cam_intrinsics)
             cam_manip_points.append(spatial_grasp_point)
-            # action_func(spatial_grasp_point)
+            vis_spatial_point(cam_manip_points, rgb_img, depth_img, cam_intrinsics)
+            action_func(spatial_grasp_point)
 
         elif action_response[0]["action"] == 'grasp_and_place':
             grasp_bbox = action_response[0]["parameters"]["arg1"]["bbox_coordinates"]
@@ -33,10 +34,11 @@ def process_robot_actions(action_response, rgb_img, depth_img):
             spatial_place_point = get_spatial_coordinates(place_bbox, rgb_img, depth_img, cam_intrinsics)
             cam_manip_points.append(spatial_grasp_point)
             cam_manip_points.append(spatial_place_point)
-            # action_func(spatial_grasp_point, spatial_place_point)
+            # Visualize the spatial points to check if they are correct
+            vis_spatial_point(cam_manip_points, rgb_img, depth_img, cam_intrinsics)
+            action_func(spatial_grasp_point, spatial_place_point)
 
-        # Visualize the spatial points to check if they are correct
-        vis_spatial_point(cam_manip_points, rgb_img, depth_img, cam_intrinsics)
+
 
     else:
         print("Unknown action:", action_response['action'])
