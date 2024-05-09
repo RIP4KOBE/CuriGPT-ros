@@ -113,6 +113,23 @@ class AudioAssistant:
             sound = AudioSegment.from_mp3(audio_file)
             play(sound)
 
+    def audio_demo_chinese(self):
+        '''
+        Play the demo audio files
+        '''
+        demo1_audio = "assets/chat_audio/chinese_demo/demo1.mp3"
+        demo2_audio = "assets/chat_audio/chinese_demo/demo2.mp3"
+        demo3_audio = "assets/chat_audio/chinese_demo/demo3.mp3"
+        demo4_audio = "assets/chat_audio/chinese_demo/demo4.mp3"
+
+        audio_files = [demo1_audio, demo2_audio, demo3_audio, demo4_audio]
+
+        for audio_file in audio_files:
+            # print("Playing:", audio_file)
+            time.sleep(8)
+            sound = AudioSegment.from_mp3(audio_file)
+            play(sound)
+
 if __name__ == '__main__':
 
     # load the configuration from the config.json file
@@ -123,16 +140,23 @@ if __name__ == '__main__':
     openai_api_key = config['openai_api_key']
     base_url = config['base_url']
     user_input_filename = config['user_input_filename']
+    # user_input_filename = "assets/chat_audio/bicchi_demo/bicchi_demo3.mp3"
     curigpt_output_filename = config['curigpt_output_filename']
-    # curigpt_output_filename = "assets/chat_audio/bicchi_demo/bicchi_demo3.mp3"
+    # curigpt_output_filename = "assets/chat_audio/chinese_demo/demo3.mp3"
 
 
     # create an instance of the AudioAssistant class
     assistant = AudioAssistant(openai_api_key, base_url, user_input_filename, curigpt_output_filename)
-    # assistant.text_to_speech("You can use the spray bottle for a variety of cleaning tasks, such as stain removal, "
-    #                          "surface cleaning, bathroom sanitizing and more.")
-    # run the audio assistant in demo mode
-    assistant.audio_demo()
+
+    # audio2text or text2audio
+    # assistant.transcribe_audio()
+    # assistant.text_to_speech("你可以使用桌上的喷雾瓶完成各种清洁任务，如去污、表面清洁、浴室消毒等。")
+
+
+    # audio demo
+    # assistant.audio_demo()
+    assistant.audio_demo_chinese()
+
 
     # run the audio assistant in interactive mode
     # assistant.record_audio()
