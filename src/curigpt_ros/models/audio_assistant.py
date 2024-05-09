@@ -100,11 +100,12 @@ class AudioAssistant:
         '''
         Play the demo audio files
         '''
-        demo1_audio = "assets/chat_audio/Bicchi_demo1.mp3"
-        demo2_audio = "assets/chat_audio/Bicchi_demo2.mp3"
-        demo3_audio = "assets/chat_audio/Bicchi_demo3.mp3"
+        demo1_audio = "assets/chat_audio/bicchi_demo/bicchi_demo1.mp3"
+        demo2_audio = "assets/chat_audio/bicchi_demo/bicchi_demo2.mp3"
+        demo3_audio = "assets/chat_audio/bicchi_demo/bicchi_demo3.mp3"
+        demo4_audio = "assets/chat_audio/bicchi_demo/bicchi_demo4.mp3"
 
-        audio_files = [demo1_audio, demo2_audio]
+        audio_files = [demo1_audio, demo2_audio, demo3_audio, demo4_audio]
 
         for audio_file in audio_files:
             # print("Playing:", audio_file)
@@ -122,15 +123,16 @@ if __name__ == '__main__':
     openai_api_key = config['openai_api_key']
     base_url = config['base_url']
     user_input_filename = config['user_input_filename']
-    # curigpt_output_filename = config['curigpt_output_filename']
-    curigpt_output_filename = "assets/chat_audio/Bicchi_demo3.mp3"
+    curigpt_output_filename = config['curigpt_output_filename']
+    # curigpt_output_filename = "assets/chat_audio/bicchi_demo/bicchi_demo3.mp3"
 
 
     # create an instance of the AudioAssistant class
     assistant = AudioAssistant(openai_api_key, base_url, user_input_filename, curigpt_output_filename)
-    assistant.text_to_speech("Sure thing, here is the spray bottle.")
+    # assistant.text_to_speech("You can use the spray bottle for a variety of cleaning tasks, such as stain removal, "
+    #                          "surface cleaning, bathroom sanitizing and more.")
     # run the audio assistant in demo mode
-    # assistant.audio_demo()
+    assistant.audio_demo()
 
     # run the audio assistant in interactive mode
     # assistant.record_audio()
