@@ -31,8 +31,8 @@ def transform_coordinates(camera_manipulation_point):
                                          [0, 0, 0])
 
     # transformation of hand-eye calibration
-    T_base_camlink = Transform(Rotation.from_quat([0.4032260, -0.03184084, 0.171038733, 0.8984100783]),
-                               [-0.01027, -0.36069, 0.2066220])
+    T_base_camlink = Transform(Rotation.from_quat([0.400276, -0.04094002, 0.1665276, 0.900206]),
+                               [-0.014567831, -0.3578937, 0.19013431])
 
 
     T_base_grasp = T_base_camlink * T_camlink_camcolor * T_camcolor_grasp
@@ -64,7 +64,7 @@ def publish_grasp_pose_to_service(grasp_pose, log_info):
         service_request.goal.position = grasp_pose.position
         service_request.goal.orientation = grasp_pose.orientation
 
-        service_request.tolerance = 5
+        service_request.tolerance = 8
         service_request.constraint = ''  # Set if needed
 
         # Call the service
@@ -126,7 +126,7 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
     grasp_pose = Pose()
     grasp_pose.position.x = robot_grasp_point[0]
     grasp_pose.position.y = robot_grasp_point[1] + 0.05
-    grasp_pose.position.z = robot_grasp_point[2] + 0.15
+    grasp_pose.position.z = robot_grasp_point[2] + 0.12
     grasp_pose.orientation.x = -0.58267
     grasp_pose.orientation.y = 0.39935
     grasp_pose.orientation.z = -0.30119
@@ -145,7 +145,7 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
     # define place pose
     place_pose = Pose()
     place_pose.position.x = robot_place_point[0] - 0.2
-    place_pose.position.y = robot_place_point[1] - 0.15
+    place_pose.position.y = robot_place_point[1] - 0.2
     place_pose.position.z = robot_place_point[2] + 0.13
     place_pose.orientation.x = -0.58267
     place_pose.orientation.y = 0.39935
@@ -157,7 +157,7 @@ def grasp_and_place(camera_grasp_point, camera_place_point):
     open_synergy_control_parameters = [0.0, 0.0]
 
     # move to pre-grasp pose
-    publish_grasp_pose_to_service(initial_pose, "Moving to pre-grasp pose...")
+    # publish_grasp_pose_to_service(initial_pose, "Moving to pre-grasp pose...")
 
     # move to grasp pose
     publish_grasp_pose_to_service(grasp_pose, "Moving to grasp pose...")
@@ -267,7 +267,7 @@ def grasp_and_give(camera_grasp_point):
     open_synergy_control_parameters = [0.0, 0.0]
 
     # move to initial pose
-    publish_grasp_pose_to_service(initial_pose, "Moving to initial pose...")
+    # publish_grasp_pose_to_service(initial_pose, "Moving to initial pose...")
 
     # move to pre-grasp pose
     # publish_grasp_pose_to_service(pre_grasp_pose, "Moving to pre-grasp pose...")
@@ -391,24 +391,26 @@ def grasp_and_give_demo():
 
     # define grasp pose1
     grasp_pose = Pose()
-    grasp_pose.position.x = 0.521348
-    grasp_pose.position.y = -0.06617
-    grasp_pose.position.z = 0.7502740
-    grasp_pose.orientation.x = -0.593142
-    grasp_pose.orientation.y = 0.46719047
-    grasp_pose.orientation.z = -0.269852
-    grasp_pose.orientation.w = 0.5975742
+    grasp_pose.position.x = 0.4405777
+    grasp_pose.position.y = 0.03181093
+    grasp_pose.position.z = 0.6261
+    grasp_pose.orientation.x = 0.9210253
+    grasp_pose.orientation.y = -0.369937
+    grasp_pose.orientation.z = 0.12184
+    grasp_pose.orientation.w = 0.0034452
 
 
-    # define grasp pose2
-    grasp_pose2 = Pose()
-    grasp_pose2.position.x = 0.50793483
-    grasp_pose2.position.y = 0.1019290
-    grasp_pose2.position.z = 0.5642419
-    grasp_pose2.orientation.x = 0.8749206
-    grasp_pose2.orientation.y = -0.2777139
-    grasp_pose2.orientation.z = 0.32665304
-    grasp_pose2.orientation.w = 0.2251369
+
+
+# define grasp pose2
+    # grasp_pose2 = Pose()
+    # grasp_pose2.position.x = 0.50793483
+    # grasp_pose2.position.y = 0.1019290
+    # grasp_pose2.position.z = 0.5642419
+    # grasp_pose2.orientation.x = 0.8749206
+    # grasp_pose2.orientation.y = -0.2777139
+    # grasp_pose2.orientation.z = 0.32665304
+    # grasp_pose2.orientation.w = 0.2251369
 
 
     # define give pose
@@ -446,7 +448,7 @@ def grasp_and_give_demo():
     # rospy.sleep(3)
 
     # move to give pose
-    publish_grasp_pose_to_service(give_pose, "Moving to give pose...")
+    # publish_grasp_pose_to_service(give_pose, "Moving to give pose...")
     # rospy.sleep(3)
 
     # move back
@@ -527,8 +529,8 @@ def grasp_handover_give(arg1, arg2):
 
 if __name__ == '__main__':
     rospy.init_node('grasp_and_place_node')
-    # grasp_and_give_demo()
+    grasp_and_give_demo()
     # grasp_and_place_demo()
-    transform_coordinates([0, 0, 0])
+    # transform_coordinates([0, 0, 0])
     rospy.spin()
     rospy.loginfo("Shutting down grasp_and_place operation")

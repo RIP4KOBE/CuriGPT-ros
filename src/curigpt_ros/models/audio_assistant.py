@@ -154,8 +154,8 @@ if __name__ == '__main__':
 
 
     # audio demo
-    # assistant.audio_demo()
-    assistant.audio_demo_chinese()
+    assistant.audio_demo()
+    # assistant.audio_demo_chinese()
 
 
     # run the audio assistant in interactive mode
