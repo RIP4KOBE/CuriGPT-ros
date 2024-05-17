@@ -130,6 +130,11 @@ class AudioAssistant:
             sound = AudioSegment.from_mp3(audio_file)
             play(sound)
 
+
+def play_audio(audio_file):
+    sound = AudioSegment.from_mp3(audio_file)
+    play(sound)
+
 if __name__ == '__main__':
 
     # load the configuration from the config.json file
@@ -141,8 +146,8 @@ if __name__ == '__main__':
     base_url = config['base_url']
     user_input_filename = config['user_input_filename']
     # user_input_filename = "assets/chat_audio/bicchi_demo/bicchi_demo3.mp3"
-    curigpt_output_filename = config['curigpt_output_filename']
-    # curigpt_output_filename = "assets/chat_audio/chinese_demo/demo3.mp3"
+    # curigpt_output_filename = config['curigpt_output_filename']
+    curigpt_output_filename = "assets/chat_audio/welcome_audio/demo_ending.mp3"
 
 
     # create an instance of the AudioAssistant class
@@ -150,11 +155,11 @@ if __name__ == '__main__':
 
     # audio2text or text2audio
     # assistant.transcribe_audio()
-    # assistant.text_to_speech("你可以使用桌上的喷雾瓶完成各种清洁任务，如去污、表面清洁、浴室消毒等。")
+    assistant.text_to_speech("You're welcome! If you have any more questions or need further assistance, feel free to ask. Have a great day!")
 
 
     # audio demo
-    assistant.audio_demo()
+    # assistant.audio_demo()
     # assistant.audio_demo_chinese()
 
 
